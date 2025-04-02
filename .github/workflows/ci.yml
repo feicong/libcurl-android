@@ -1,0 +1,44 @@
+name: Android Build CI
+
+on:
+  push:
+    branches:
+      - master
+  pull_request:
+    branches:
+      - master
+  workflow_dispatch:
+  
+
+jobs:
+  build:
+    runs-on: Ubuntu-latest
+    
+    steps:
+    - name: Checkout code
+      uses: actions/checkout@v4
+      with:
+        fetch-depth: 0
+
+    - name: Update submodules
+      run: |
+        git submodule update --init --recursive
+
+    - name: Set up NDK
+      id: setup-ndk
+      uses: nttld/setup-ndk@v1
+      with:
+        ndk-version: 'r27c'
+        add-to-path: false
+
+    - name: Run build script
+      run: |
+        ./build_for_android.sh
+      env:
+          NDK_ROOT: ${{ steps.setup-ndk.outputs.ndk-path }}
+
+    - name: Upload build artifacts
+      uses: actions/upload-artifact@v4
+      with:
+        name: android-build-artifacts
+        path: ./jni/build/

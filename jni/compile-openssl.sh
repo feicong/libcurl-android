@@ -15,7 +15,7 @@
 # You should have received a copy of the GNU General Public License
 # along with this program.  If not, see <https://www.gnu.org/licenses/>.
 
-APP_ABI=(armeabi-v7a arm64-v8a x86-64)
+APP_ABI=(armeabi-v7a arm64-v8a x86_64)
 
 BASE_PATH=$(
 	cd "$(dirname $0)"
@@ -65,11 +65,12 @@ compile() {
 	export PATH=$TOOLCHAIN:$TOOLCHAIN_2:$PATH
 	safeMakeDir $BUILD_PATH/openssl/$ABI
 	checkExitCode $?
-	./Configure $ARCH --prefix=$BUILD_PATH/openssl/$ABI --openssldir=$BUILD_PATH/openssl/$ABI -D__ANDROID_API__=$API
+	./Configure $ARCH --prefix=$BUILD_PATH/openssl/$ABI --openssldir=$BUILD_PATH/openssl/$ABI -D__ANDROID_API__=$API -fPIC
 	checkExitCode $?
 	# clean
 	make clean
 	checkExitCode $?
+	sed -E -i '' -e '/[.]hidden.*OPENSSL_armcap_P/d' -e '/[.]extern.*OPENSSL_armcap_P/ {p; s/extern/hidden/; }' crypto/*arm*pl crypto/*/asm/*arm*pl
 	# make
 	make -j4 depend
 	checkExitCode $?
@@ -101,7 +102,7 @@ for abi in ${APP_ABI[*]}; do
 	arm64-v8a)
 		compile $abi "android-arm64" "$NDK_ROOT/toolchains/llvm/prebuilt/$host-x86_64/bin" "$NDK_ROOT/toolchains/aarch64-linux-android-4.9/prebuilt/$host-x86_64/bin"
 		;;
-	x86-64)
+	x86_64)
 		compile $abi "android-x86_64" "$NDK_ROOT/toolchains/llvm/prebuilt/$host-x86_64/bin" "$NDK_ROOT/toolchains/x86_64-4.9/prebuilt/$host-x86_64/bin"
 		;;
 	*)

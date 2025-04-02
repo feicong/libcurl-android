@@ -15,7 +15,7 @@
 # You should have received a copy of the GNU General Public License
 # along with this program.  If not, see <https://www.gnu.org/licenses/>.
 
-APP_ABI=(armeabi-v7a arm64-v8a x86-64)
+APP_ABI=(armeabi-v7a arm64-v8a x86_64)
 
 BASE_PATH=$(
 	cd "$(dirname $0)"
@@ -77,7 +77,7 @@ compile() {
 	export LD=$TOOLCHAIN/ld
 	export RANLIB=$TOOLCHAIN/llvm-ranlib
 	export STRIP=$TOOLCHAIN/llvm-strip
-	export CFLAGS="-I$SYSROOT/usr/include --sysroot=$SYSROOT $CFLAGS"
+	export CFLAGS="-I$SYSROOT/usr/include --sysroot=$SYSROOT -fPIC $CFLAGS"
 	# zlib configure
 	export CROSS_PREFIX="$TOOLCHAIN/$TARGET-"
 	# config
@@ -119,7 +119,7 @@ for abi in ${APP_ABI[*]}; do
 		# https://gcc.gnu.org/onlinedocs/gcc/AArch64-Options.html#AArch64-Options
 		compile $abi "$NDK_ROOT/toolchains/llvm/prebuilt/$host-x86_64/sysroot" "$NDK_ROOT/toolchains/llvm/prebuilt/$host-x86_64/bin" "aarch64-linux-android" "-march=armv8-a -fPIC"
 		;;
-	x86-64)
+	x86_64)
 		# http://gcc.gnu.org/onlinedocs/gcc/x86-Options.html
 		compile $abi "$NDK_ROOT/toolchains/llvm/prebuilt/$host-x86_64/sysroot" "$NDK_ROOT/toolchains/llvm/prebuilt/$host-x86_64/bin" "x86_64-linux-android" "-march=x86-64 -fPIC"
 		;;
