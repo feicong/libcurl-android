@@ -16,7 +16,7 @@ jobs:
     
     steps:
     - name: Checkout code
-      uses: actions/checkout@v4
+      uses: actions/checkout@v5
       with:
         fetch-depth: 0
 
@@ -38,7 +38,7 @@ jobs:
           NDK_ROOT: ${{ steps.setup-ndk.outputs.ndk-path }}
 
     - name: Upload build artifacts
-      uses: actions/upload-artifact@v4
+      uses: actions/upload-artifact@v5
       with:
         name: android-build-artifacts
         path: ./jni/build/
